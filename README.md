@@ -17,7 +17,7 @@ const untagResource = async (resourceArn, tagKeys) => {
 // Function to tag a resource
 const tagResource = async (resourceArn, tags) => {
   const inputTagResource = { resourceArn, tags };
-  const tagCommand = new TagResourceCommand(inputTagResource);
+  const tagCommand = await new TagResourceCommand(inputTagResource);
   const tagResponse = await client.send(tagCommand);
   return tagResponse;
 };
@@ -45,9 +45,11 @@ export const handler = async (event) => {
         let keys={}
         keys[event['tagName']]=event['tagValue']
         console.log(keys)
-      const tagResponse = await tagResource(event['arn'], keys);
+        for(let i=0;i<event['arn'].length;i++){ 
+      const tagResponse = await tagResource(event['arn'][i], keys);
       console.log("Resource tagged successfully:", tagResponse);
-      return tagResponse 
+        }
+      return "completed" 
       }
       
   } catch (error) {
